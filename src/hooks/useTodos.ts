@@ -36,7 +36,7 @@ const useTodos = () => {
       toast.success('Successfully Added todo')
       fetchTodos()
     } catch (error) {
-      console.log({})
+      console.log(error)
     }
   }
 
@@ -87,7 +87,6 @@ const useTodos = () => {
   }
 
   const handleInputChange = e => {
-    console.log(e.target.value)
     setNewTodo(e.target.value)
   }
 
@@ -106,7 +105,6 @@ const useTodos = () => {
   }
 
   const handleKeyDown = e => {
-    console.log(e.keyCode)
     if (e.keyCode === 13 && e.ctrlKey && newTodo) {
       addTodo(newTodo)
     }
