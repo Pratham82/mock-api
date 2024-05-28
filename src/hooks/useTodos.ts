@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { useCallback, useState } from 'react'
+import toast from 'react-hot-toast'
 
 const useTodos = () => {
   const [todos, setTodos] = useState([])
@@ -8,10 +9,14 @@ const useTodos = () => {
   // *TODO Fetch Todos
   const fetchTodos = useCallback(async () => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('Todos')
         .select('*')
         .order('id', { ascending: true })
+
+      if (error) {
+        toast.error('Unable to fetch todos')
+      }
       setTodos(data)
     } catch (error) {}
   }, [])
@@ -19,11 +24,16 @@ const useTodos = () => {
   // *TODO Add Todo
   const addTodo = async (todoText: string) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('Todos')
         .insert([{ todo_text: todoText, is_completed: false }])
-      setNewTodo('')
 
+      if (error) {
+        toast.error('Unable to add todo')
+      }
+
+      setNewTodo('')
+      toast.success('Successfully Added todo')
       fetchTodos()
     } catch (error) {
       console.log({})
@@ -47,6 +57,10 @@ const useTodos = () => {
         .eq('id', todoId)
         .select()
 
+      if (updateError) {
+        toast.error('Unable to update todo')
+      }
+
       fetchTodos()
     } catch (error) {
       console.log(error)
@@ -60,6 +74,12 @@ const useTodos = () => {
         .from('Todos')
         .delete()
         .eq('id', todoId)
+
+      if (error) {
+        toast.error('Unable to add todo')
+      }
+
+      toast.success('Successfully Removed todo', { icon: '🗑️' })
       fetchTodos()
     } catch (error) {
       console.log(error)
