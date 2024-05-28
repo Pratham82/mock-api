@@ -5,11 +5,6 @@ const useTodos = () => {
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
 
-  const handleInputChange = e => {
-    console.log(e.target.value)
-    setNewTodo(e.target.value)
-  }
-
   // *TODO Fetch Todos
   const fetchTodos = useCallback(async () => {
     try {
@@ -71,9 +66,45 @@ const useTodos = () => {
     }
   }
 
+  const handleInputChange = e => {
+    console.log(e.target.value)
+    setNewTodo(e.target.value)
+  }
+
+  const handleAddTodo = () => {
+    if (newTodo) {
+      addTodo(newTodo)
+    }
+  }
+
+  const handleUpdateTodo = e => {
+    updateTodo(e.target.value)
+  }
+
+  const handleDeleteTodo = e => {
+    deleteTodo(e.target.value)
+  }
+
+  const handleKeyDown = e => {
+    console.log(e.keyCode)
+    if (e.keyCode === 13 && e.ctrlKey && newTodo) {
+      addTodo(newTodo)
+    }
+  }
+
   return [
     { todos, newTodo },
-    { fetchTodos, updateTodo, deleteTodo, handleInputChange, addTodo },
+    {
+      fetchTodos,
+      updateTodo,
+      deleteTodo,
+      addTodo,
+      handleAddTodo,
+      handleDeleteTodo,
+      handleUpdateTodo,
+      handleKeyDown,
+      handleInputChange,
+    },
   ]
 }
 

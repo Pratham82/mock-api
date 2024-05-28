@@ -10,30 +10,17 @@ export default function Home() {
     { todos, newTodo },
     {
       fetchTodos = () => {},
-      updateTodo = () => {},
-      deleteTodo = () => {},
-      handleInputChange = () => {},
-      addTodo = () => {},
+      handleAddTodo,
+      handleDeleteTodo,
+      handleUpdateTodo,
+      handleKeyDown,
+      handleInputChange,
     },
   ] = useTodos()
 
   useEffect(() => {
     fetchTodos()
   }, [])
-
-  const handleAddTodo = () => {
-    if (newTodo) {
-      addTodo(newTodo)
-    }
-  }
-
-  const handleUpdateTodo = e => {
-    updateTodo(e.target.value)
-  }
-
-  const handleDeleteTodo = e => {
-    deleteTodo(e.target.value)
-  }
 
   return (
     <main
@@ -48,6 +35,7 @@ export default function Home() {
           value={newTodo}
           className="py-2 px-1 rounded-md text-slate-600"
           onChange={handleInputChange}
+          onKeyUp={handleKeyDown}
         />
         <button
           className="ml-3 bg-slate-400 p-2 rounded-md hover:bg-slate-600"
@@ -63,7 +51,7 @@ export default function Home() {
                   <input
                     type="checkbox"
                     checked={todo?.is_completed}
-                    value={todo.id}
+                    value={todo?.id}
                     onChange={handleUpdateTodo}
                   />
                   <span
@@ -71,7 +59,7 @@ export default function Home() {
                       todo?.is_completed ? 'line-through' : 'none'
                     }`}
                   >
-                    {todo.todo_text}
+                    {todo?.todo_text}
                   </span>
                   <button
                     className="ml-2 mt-1"
