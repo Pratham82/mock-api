@@ -1,39 +1,44 @@
-import { supabase } from '@/lib/supabase'
-import { useCallback, useState } from 'react'
-import toast from 'react-hot-toast'
+import { supabase } from "@/lib/supabase"
+import { MouseEventHandler, useCallback, useState } from "react"
+import toast from "react-hot-toast"
+
+export type Todo = {
+  id: string
+  created_at: string
+  title: string
+  completed: boolean
+}
 
 const useTodos = () => {
-  const [todos, setTodos] = useState([])
-  const [newTodo, setNewTodo] = useState('')
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [newTodo, setNewTodo] = useState("")
 
   // *TODO Fetch Todos
   const fetchTodos = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('Todos')
-        .select('*')
-        .order('id', { ascending: true })
+        .from("todos")
+        .select("*")
+        .order("id", { ascending: true })
 
       if (error) {
-        toast.error('Unable to fetch todos')
+        toast.error("Unable to fetch todos")
       }
-      setTodos(data)
+      setTodos(data ?? [])
     } catch (error) {}
   }, [])
 
   // *TODO Add Todo
   const addTodo = async (todoText: string) => {
     try {
-      const { error } = await supabase
-        .from('Todos')
-        .insert([{ todo_text: todoText, is_completed: false }])
+      const { error } = await supabase.from("todos").insert([{ title: todoText, completed: false }])
 
       if (error) {
-        toast.error('Unable to add todo')
+        toast.error("Unable to add todo")
       }
 
-      setNewTodo('')
-      toast.success('Successfully Added todo')
+      setNewTodo("")
+      toast.success("Successfully Added todo")
       fetchTodos()
     } catch (error) {
       console.log(error)
@@ -41,24 +46,24 @@ const useTodos = () => {
   }
 
   // *TODO Update todo
-  const updateTodo = async (todoId: number) => {
+  const updateTodo = async (todoId: string) => {
     try {
       const { data: currentTodoValue, error } = await supabase
-        .from('Todos')
-        .select('is_completed')
-        .eq('id', todoId)
+        .from("todos")
+        .select("completed")
+        .eq("id", todoId)
         .single()
 
-      const updatedTodoValue = !currentTodoValue?.is_completed
+      const updatedTodoValue = !currentTodoValue?.completed
 
       const { error: updateError } = await supabase
-        .from('Todos')
-        .update({ is_completed: updatedTodoValue })
-        .eq('id', todoId)
+        .from("todos")
+        .update({ completed: updatedTodoValue })
+        .eq("id", todoId)
         .select()
 
       if (updateError) {
-        toast.error('Unable to update todo')
+        toast.error("Unable to update todo")
       }
 
       fetchTodos()
@@ -68,25 +73,22 @@ const useTodos = () => {
   }
 
   // *TODO Delete todo
-  const deleteTodo = async (todoId: number) => {
+  const deleteTodo = async (todoId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('Todos')
-        .delete()
-        .eq('id', todoId)
+      const { data, error } = await supabase.from("todos").delete().eq("id", todoId)
 
       if (error) {
-        toast.error('Unable to add todo')
+        toast.error("Unable to add todo")
       }
 
-      toast.success('Successfully Removed todo', { icon: '🗑️' })
+      toast.success("Successfully Removed todo", { icon: "🗑️" })
       fetchTodos()
     } catch (error) {
       console.log(error)
     }
   }
 
-  const handleInputChange = e => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewTodo(e.target.value)
   }
 
@@ -96,20 +98,19 @@ const useTodos = () => {
     }
   }
 
-  const handleUpdateTodo = e => {
+  const handleUpdateTodo = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateTodo(e.target.value)
   }
 
-  const handleDeleteTodo = e => {
+  const handleDeleteTodo = (e: any) => {
     deleteTodo(e.target.value)
   }
 
-  const handleKeyDown = e => {
-    if (e.keyCode === 13 && e.ctrlKey && newTodo) {
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter" && e.ctrlKey && newTodo) {
       addTodo(newTodo)
     }
   }
-
   return [
     { todos, newTodo },
     {

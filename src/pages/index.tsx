@@ -1,9 +1,9 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import { useEffect } from 'react'
-import { useTodos } from '@/hooks'
+import Image from "next/image"
+import { Inter } from "next/font/google"
+import { useEffect } from "react"
+import { useTodos } from "@/hooks"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
   const [
@@ -11,7 +11,7 @@ export default function Home() {
     {
       fetchTodos = () => {},
       handleAddTodo,
-      handleDeleteTodo,
+      handleDeleteTodo = () => {},
       handleUpdateTodo,
       handleKeyDown,
       handleInputChange,
@@ -45,28 +45,24 @@ export default function Home() {
         </button>
         <div>
           {todos &&
-            todos.map(todo => {
+            todos?.map(todo => {
               return (
                 <div key={todo.id} className="py-3 flex items-center">
                   <input
                     type="checkbox"
-                    checked={todo?.is_completed}
+                    checked={todo?.completed}
                     value={todo?.id}
                     onChange={handleUpdateTodo}
                   />
                   <span
                     className={`pl-2 text-decoration-line: ${
-                      todo?.is_completed ? 'line-through' : 'none'
+                      todo?.completed ? "line-through" : "none"
                     }`}
                   >
-                    {todo?.todo_text}
+                    {todo?.title}
                   </span>
-                  <button
-                    className="ml-2 mt-1"
-                    value={todo?.id}
-                    onClick={handleDeleteTodo}
-                  >
-                    {' '}
+                  <button className="ml-2 mt-1" value={todo?.id} onClick={handleDeleteTodo}>
+                    {" "}
                     ❌
                   </button>
                 </div>
